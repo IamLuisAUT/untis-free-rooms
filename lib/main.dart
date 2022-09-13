@@ -33,6 +33,11 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   String selectedBuilding = buildings.first;
 
+  final _schoolTextController = TextEditingController();
+  final _usernameTextController = TextEditingController();
+  final _passwordTextController = TextEditingController();
+  final _baseUrlTextController = TextEditingController();
+
   void _getFreeRooms() {
     setState(() {
       print(selectedBuilding);
@@ -79,6 +84,12 @@ class _MyHomePageState extends State<MyHomePage> {
                     );
                   }).toList(),
                 )
+              ),
+              IconButton(
+                icon: const Icon(Icons.settings),
+                onPressed: () {
+                  showDialog(context: context, builder: (BuildContext context) => _buildLoginDialog(context));
+                },
               )
             ],
           ),
@@ -114,6 +125,63 @@ class _MyHomePageState extends State<MyHomePage> {
         tooltip: 'Search',
         child: const Icon(Icons.access_time),
       ),
+    );
+  }
+
+  Widget _buildLoginDialog(BuildContext context) {
+    return AlertDialog(
+      title: const Text('Login Data'),
+      content: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Row(
+            mainAxisSize: MainAxisSize.max,
+            children: <Widget>[
+              const Text("Schoolname: "),
+              Expanded(
+                child: TextField(controller: _schoolTextController),
+              )
+            ]
+          ),
+          Row(
+              mainAxisSize: MainAxisSize.max,
+              children: <Widget>[
+                const Text("Username: "),
+                Expanded(
+                  child: TextField(controller: _usernameTextController),
+                )
+              ]
+          ),
+          Row(
+              mainAxisSize: MainAxisSize.max,
+              children: <Widget>[
+                const Text("Password: "),
+                Expanded(
+                  child: TextField(controller: _passwordTextController),
+                )
+              ]
+          ),
+          Row(
+              mainAxisSize: MainAxisSize.max,
+              children: <Widget>[
+                const Text("Base Url: "),
+                Expanded(
+                  child: TextField(controller: _baseUrlTextController),
+                )
+              ]
+          ),
+        ],
+      ),
+      actions: <Widget>[
+        TextButton(
+          onPressed: () {
+            Navigator.of(context).pop();
+
+          },
+          child: const Text('Save'),
+        ),
+      ],
     );
   }
 }
