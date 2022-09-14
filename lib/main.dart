@@ -48,14 +48,19 @@ class _MyHomePageState extends State<MyHomePage> {
   final _passwordTextController = TextEditingController();
   final _baseUrlTextController = TextEditingController();
 
-  _MyHomePageState() : super() {
+  String freeRooms = '-';
+  String blockedRooms = '-';
 
+  _MyHomePageState() : super() {
+    _retrieveLogin();
   }
 
-  void _getFreeRooms() {
-    setState(() {
-      getFreeRooms();
-    });
+  void _getFreeRooms() async {
+    print(await getFreeRooms('C2.10'));
+    /* setState(() {
+      freeRooms = rooms[0];
+      blockedRooms = rooms[1];
+    }); */
   }
 
   void _saveLogin() async {
@@ -85,6 +90,11 @@ class _MyHomePageState extends State<MyHomePage> {
     username = preferences.getString('username');
     password = preferences.getString('password');
     baseUrl = preferences.getString('baseurl');
+
+    _schoolTextController.text = schoolname;
+    _usernameTextController.text = username;
+    _passwordTextController.text = password;
+    _baseUrlTextController.text = baseUrl;
   }
 
   @override
@@ -140,17 +150,17 @@ class _MyHomePageState extends State<MyHomePage> {
             child: ListView(
               children: <Widget>[
                 Column(
-                  children: const <Widget>[
+                  children: <Widget>[
                     Text(
-                      "C3.08\nC3.09\nC5.10\nC3.08\nC3.09\nC5.10\nC3.08\nC3.09\nC5.10\nC3.08\nC3.09\nC5.10\nC3.08\nC3.09\nC5.10\nC3.08\nC3.09\nC5.10\nC3.08\nC3.09\nC5.10\nC3.08\nC3.09\nC5.10\nC3.08\nC3.09\nC5.10\nC3.08\nC3.09\nC5.10\n",
-                      style: TextStyle(
+                      freeRooms,
+                      style: const TextStyle(
                           fontSize: 20,
                           color: Colors.green
                       )
                     ),
                     Text(
-                        "C3.08\nC3.09\nC5.10\nC3.08\nC3.09\nC5.10\nC3.08\nC3.09\nC5.10\nC3.08\nC3.09\nC5.10\nC3.08\nC3.09\nC5.10\nC3.08\nC3.09\nC5.10\nC3.08\nC3.09\nC5.10\nC3.08\nC3.09\nC5.10\nC3.08\nC3.09\nC5.10\nC3.08\nC3.09\nC5.10\n",
-                        style: TextStyle(
+                        blockedRooms,
+                        style: const TextStyle(
                             fontSize: 20,
                             color: Colors.red
                         )

@@ -14,7 +14,7 @@ class WebUntis {
 
   Future<http.Response> login() async {
     final response = await http.post(
-        Uri.parse("https://${baseUrl}/WebUntis/jsonrpc.do?school=$school"),
+        Uri.parse("https://$baseUrl/WebUntis/jsonrpc.do?school=$school"),
         body: jsonEncode({
           "method": "authenticate",
           "id": id,
@@ -70,4 +70,12 @@ class WebUntis {
             {if (room["building"] == building) roomsInBuilding.add(room)})
         .toList();
   }
+
+  static const types = {
+    "class": 1,
+    "teacher": 2,
+    "subject": 3,
+    "room": 4,
+    "student": 5
+  };
 }

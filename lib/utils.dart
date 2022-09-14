@@ -1,19 +1,16 @@
 import 'webuntis.dart';
+import 'dart:core';
 
-String building = 'C3.09';
-String roomType = "Stammklasse";
-int timetableType = 4;
-
-void getFreeRooms() async {
+Future<List> getFreeRooms(checkRooms) async {
   var time = currentTime();
   WebUntis untis = WebUntis("XXX", "XXX", "XXX",
       "XXX", "XXX");
   untis.login().then((value) {
     untis.getRooms().then((rooms) {
       rooms.forEach((room) async {
-        if (room['name'].startsWith(building) &&
-            room['longName'] == roomType) {
-          var timetable = await untis.getTimetableFor(room['id'], timetableType);
+        if (room['name'].startsWith(checkRooms) &&
+            room['longName'] == 'Stammklasse') {
+          var timetable = await untis.getTimetableFor(room['id'], WebUntis.types['room']);
 
           if (timetable.length != 0) {
             bool isFree = true;
@@ -24,30 +21,31 @@ void getFreeRooms() async {
                   hour["endTime"] < time &&
                   hour["code"].toString() != "cancelled") {
                 isFree = false;
-                print('blocked');
               }
               if (time < hour["startTime"] &&
-                  hour["code"] != "cancelled" &&
+                  hour["code"].toString() != "cancelled" &&
                   hour["ro"][0]["id"] == room["id"]) {
                 startingHours.add(hour["startTime"]);
               }
             });
             if(isFree) {
               if(startingHours.isNotEmpty) {
-                print('Is free until TBP');
+                freeRooms += room['name'] + ' until TBP\n';
               } else {
-                print('Is free until end of the day');
+                freeRooms += room['name'] + '\n';
               }
             } else {
-              print('Is blocked');
+              blockedRooms += room['name'] + '\n';
             }
           } else {
-            print('Is free');
+            freeRooms += room['name'] + '\n';
           }
         }
       });
     });
   });
+
+  return [freeRooms, blockedRooms];
 }
 
 int currentTime() {
