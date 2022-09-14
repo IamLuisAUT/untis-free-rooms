@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 const List<String> buildings = <String>['A', 'B', 'C', 'D'];
 
@@ -31,17 +32,58 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  late final preferences;
+  bool preferencesInit = false;
+
   String selectedBuilding = buildings.first;
+
+  String schoolname = '';
+  String username = '';
+  String password = '';
+  String baseUrl = '';
 
   final _schoolTextController = TextEditingController();
   final _usernameTextController = TextEditingController();
   final _passwordTextController = TextEditingController();
   final _baseUrlTextController = TextEditingController();
 
+  _MyHomePageState() : super() {
+
+  }
+
   void _getFreeRooms() {
     setState(() {
       print(selectedBuilding);
     });
+  }
+
+  void _saveLogin() async {
+    schoolname = _schoolTextController.value.text;
+    username = _usernameTextController.value.text;
+    password = _passwordTextController.value.text;
+    baseUrl = _baseUrlTextController.value.text;
+
+    if(!preferencesInit) {
+      preferences = await SharedPreferences.getInstance();
+      preferencesInit = true;
+    }
+
+    await preferences.setString('schoolname', schoolname);
+    await preferences.setString('username', username);
+    await preferences.setString('password', password);
+    await preferences.setString('baseurl', baseUrl);
+  }
+
+  void _retrieveLogin() async {
+    if(!preferencesInit) {
+      preferences = await SharedPreferences.getInstance();
+      preferencesInit = true;
+    }
+
+    schoolname = preferences.getString('schoolname');
+    username = preferences.getString('username');
+    password = preferences.getString('password');
+    baseUrl = preferences.getString('baseurl');
   }
 
   @override
@@ -132,52 +174,64 @@ class _MyHomePageState extends State<MyHomePage> {
     return AlertDialog(
       title: const Text('Login Data'),
       content: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
-          Row(
-            mainAxisSize: MainAxisSize.max,
-            children: <Widget>[
-              const Text("Schoolname: "),
-              Expanded(
-                child: TextField(controller: _schoolTextController),
-              )
-            ]
-          ),
-          Row(
-              mainAxisSize: MainAxisSize.max,
+          Flexible(
+            flex: 1,
+            fit: FlexFit.tight,
+            child: ListView(
               children: <Widget>[
-                const Text("Username: "),
-                Expanded(
-                  child: TextField(controller: _usernameTextController),
+                Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    Row(
+                      mainAxisSize: MainAxisSize.max,
+                      children: <Widget>[
+                        const Text("Schoolname: "),
+                        Expanded(
+                          child: TextField(controller: _schoolTextController),
+                        )
+                      ]
+                    ),
+                    Row(
+                      mainAxisSize: MainAxisSize.max,
+                      children: <Widget>[
+                        const Text("Username: "),
+                        Expanded(
+                          child: TextField(controller: _usernameTextController),
+                        )
+                      ]
+                    ),
+                    Row(
+                      mainAxisSize: MainAxisSize.max,
+                      children: <Widget>[
+                        const Text("Password: "),
+                        Expanded(
+                          child: TextField(controller: _passwordTextController),
+                        )
+                      ]
+                    ),
+                    Row(
+                      mainAxisSize: MainAxisSize.max,
+                      children: <Widget>[
+                        const Text("Base Url: "),
+                        Expanded(
+                          child: TextField(controller: _baseUrlTextController),
+                        )
+                      ]
+                    ),
+                  ],
                 )
               ]
-          ),
-          Row(
-              mainAxisSize: MainAxisSize.max,
-              children: <Widget>[
-                const Text("Password: "),
-                Expanded(
-                  child: TextField(controller: _passwordTextController),
-                )
-              ]
-          ),
-          Row(
-              mainAxisSize: MainAxisSize.max,
-              children: <Widget>[
-                const Text("Base Url: "),
-                Expanded(
-                  child: TextField(controller: _baseUrlTextController),
-                )
-              ]
-          ),
+            )
+          )
         ],
       ),
       actions: <Widget>[
         TextButton(
           onPressed: () {
             Navigator.of(context).pop();
-
+            _saveLogin();
           },
           child: const Text('Save'),
         ),
