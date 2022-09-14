@@ -3,11 +3,17 @@ import 'dart:core';
 
 Future<List> getFreeRooms(checkRooms) async {
   var time = currentTime();
+  print(time);
+  String freeRooms = "\n";
+  String blockedRooms = "\n";
+
   WebUntis untis = WebUntis("XXX", "XXX", "XXX",
       "XXX", "XXX");
-  untis.login().then((value) {
-    untis.getRooms().then((rooms) {
-      rooms.forEach((room) async {
+  await untis.login().then((value) async {
+    await untis.getRooms().then((rooms) async {
+      for(int r = 0; r < rooms.length; r++) {
+        var room = rooms[r];
+>>>>>>> 6728b21 (Integrated frontend)
         if (room['name'].startsWith(checkRooms) &&
             room['longName'] == 'Stammklasse') {
           var timetable = await untis.getTimetableFor(room['id'], WebUntis.types['room']);
@@ -16,10 +22,13 @@ Future<List> getFreeRooms(checkRooms) async {
             bool isFree = true;
             List startingHours = [];
 
-            timetable.forEach((hour) {
+            for(int t = 0; t < timetable.length; t++) {
+              var hour = timetable[t];
+              print(hour);
               if (hour["startTime"] < time &&
-                  hour["endTime"] < time &&
+                  time < hour["endTime"] &&
                   hour["code"].toString() != "cancelled") {
+                print('a');
                 isFree = false;
               }
               if (time < hour["startTime"] &&
@@ -27,7 +36,7 @@ Future<List> getFreeRooms(checkRooms) async {
                   hour["ro"][0]["id"] == room["id"]) {
                 startingHours.add(hour["startTime"]);
               }
-            });
+            }
             if(isFree) {
               if(startingHours.isNotEmpty) {
                 freeRooms += room['name'] + ' until TBP\n';
@@ -41,7 +50,7 @@ Future<List> getFreeRooms(checkRooms) async {
             freeRooms += room['name'] + '\n';
           }
         }
-      });
+      }
     });
   });
 
@@ -49,7 +58,6 @@ Future<List> getFreeRooms(checkRooms) async {
 }
 
 int currentTime() {
-  // TODO: Fix timezone
   return int.parse(
-      "${DateTime.now().hour}${DateTime.now().minute.toString().padLeft(2, '0')}") + 200;
+      "${DateTime.now().hour}${DateTime.now().minute.toString().padLeft(2, '0')}");
 }

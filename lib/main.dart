@@ -55,12 +55,14 @@ class _MyHomePageState extends State<MyHomePage> {
     _retrieveLogin();
   }
 
-  void _getFreeRooms() async {
-    print(await getFreeRooms('C2.10'));
-    /* setState(() {
-      freeRooms = rooms[0];
-      blockedRooms = rooms[1];
-    }); */
+  void _getFreeRooms() {
+    setState(() {
+      getFreeRooms(selectedBuilding).then((rooms) {
+        print(rooms);
+        freeRooms = rooms[0];
+        blockedRooms = rooms[1];
+      });
+    });
   }
 
   void _saveLogin() async {
@@ -86,10 +88,10 @@ class _MyHomePageState extends State<MyHomePage> {
       preferencesInit = true;
     }
 
-    schoolname = preferences.getString('schoolname');
-    username = preferences.getString('username');
-    password = preferences.getString('password');
-    baseUrl = preferences.getString('baseurl');
+    schoolname = preferences.getString('schoolname') ?? '';
+    username = preferences.getString('username') ?? '';
+    password = preferences.getString('password') ?? '';
+    baseUrl = preferences.getString('baseurl') ?? '';
 
     _schoolTextController.text = schoolname;
     _usernameTextController.text = username;
