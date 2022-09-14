@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'utils.dart';
 
 const List<String> buildings = <String>['A', 'B', 'C', 'D'];
 
@@ -53,7 +54,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   void _getFreeRooms() {
     setState(() {
-      print(selectedBuilding);
+      getFreeRooms();
     });
   }
 
