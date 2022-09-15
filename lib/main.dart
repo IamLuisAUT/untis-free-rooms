@@ -55,13 +55,11 @@ class _MyHomePageState extends State<MyHomePage> {
     _retrieveLogin();
   }
 
-  void _getFreeRooms() {
+  void _getFreeRooms() async {
+    List<dynamic> rooms = await getFreeRooms(selectedBuilding);
     setState(() {
-      getFreeRooms(selectedBuilding).then((rooms) {
-        print(rooms);
-        freeRooms = rooms[0];
-        blockedRooms = rooms[1];
-      });
+      freeRooms = rooms[0];
+      blockedRooms = rooms[1];
     });
   }
 
