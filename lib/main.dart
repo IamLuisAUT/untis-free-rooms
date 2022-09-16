@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'utils.dart';
-import 'webuntis.dart';
 
 const List<String> buildings = <String>['A', 'B', 'C', 'D'];
 const List<String> floors =  <String>['E', 'H', '1', '2', '3', '4', '5'];
@@ -43,7 +42,6 @@ class _MyHomePageState extends State<MyHomePage> {
   String username = '';
   String password = '';
   String baseUrl = '';
-  late WebUntis untis;
 
   final _schoolTextController = TextEditingController();
   final _usernameTextController = TextEditingController();
@@ -58,7 +56,7 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   void _getFreeRooms() async {
-    List<dynamic> rooms = await getFreeRooms(untis, selectedBuilding);
+    List<dynamic> rooms = await getFreeRooms(selectedBuilding + selectedFloor);
     setState(() {
       freeRooms = rooms[0];
       blockedRooms = rooms[1];
@@ -98,15 +96,6 @@ class _MyHomePageState extends State<MyHomePage> {
     _passwordTextController.text = password;
     _baseUrlTextController.text = baseUrl;
   }
-
-  void newUntisSession() {
-    untis = WebUntis(schoolname, username, password, baseUrl, "Awesome");
-    untis.login().then((value) {
-      print("LOGIN: $value");
-      return;
-    });
-  }
-
 
   @override
   Widget build(BuildContext context) {
@@ -214,71 +203,65 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget _buildLoginDialog(BuildContext context) {
     return AlertDialog(
       title: const Text('Login Data'),
-      content: Container (
-          width: MediaQuery.of(context).size.width * 0.9,
-          height: MediaQuery.of(context).size.height * 0.9,
-          child: Column (
-          children: <Widget>[
-            Flexible(
-                flex: 1,
-                fit: FlexFit.tight,
-                child: ListView(
-                    shrinkWrap: true,
-                    children: <Widget>[
-                      Column(
-                        mainAxisSize: MainAxisSize.min,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: <Widget>[
-                          Row(
-                              mainAxisSize: MainAxisSize.max,
-                              children: <Widget>[
-                                const Text("Schoolname: "),
-                                Expanded(
-                                  child: TextField(controller: _schoolTextController),
-                                )
-                              ]
-                          ),
-                          Row(
-                              mainAxisSize: MainAxisSize.max,
-                              children: <Widget>[
-                                const Text("Username: "),
-                                Expanded(
-                                  child: TextField(controller: _usernameTextController),
-                                )
-                              ]
-                          ),
-                          Row(
-                              mainAxisSize: MainAxisSize.max,
-                              children: <Widget>[
-                                const Text("Password: "),
-                                Expanded(
-                                  child: TextField(controller: _passwordTextController),
-                                )
-                              ]
-                          ),
-                          Row(
-                              mainAxisSize: MainAxisSize.max,
-                              children: <Widget>[
-                                const Text("Base Url: "),
-                                Expanded(
-                                  child: TextField(controller: _baseUrlTextController),
-                                )
-                              ]
-                          ),
-                        ],
-                      )
-                    ]
+      content: Column(
+        children: <Widget>[
+          Flexible(
+            flex: 1,
+            fit: FlexFit.tight,
+            child: ListView(
+              children: <Widget>[
+                Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    Row(
+                      mainAxisSize: MainAxisSize.max,
+                      children: <Widget>[
+                        const Text("Schoolname: "),
+                        Expanded(
+                          child: TextField(controller: _schoolTextController),
+                        )
+                      ]
+                    ),
+                    Row(
+                      mainAxisSize: MainAxisSize.max,
+                      children: <Widget>[
+                        const Text("Username: "),
+                        Expanded(
+                          child: TextField(controller: _usernameTextController),
+                        )
+                      ]
+                    ),
+                    Row(
+                      mainAxisSize: MainAxisSize.max,
+                      children: <Widget>[
+                        const Text("Password: "),
+                        Expanded(
+                          child: TextField(controller: _passwordTextController),
+                        )
+                      ]
+                    ),
+                    Row(
+                      mainAxisSize: MainAxisSize.max,
+                      children: <Widget>[
+                        const Text("Base Url: "),
+                        Expanded(
+                          child: TextField(controller: _baseUrlTextController),
+                        )
+                      ]
+                    ),
+                  ],
                 )
+              ]
             )
-          ],
-        ),
+          )
+        ],
       ),
       actions: <Widget>[
         TextButton(
           onPressed: () {
             Navigator.of(context).pop();
             _saveLogin();
-            newUntisSession();
           },
           child: const Text('Save'),
         ),

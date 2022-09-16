@@ -1,7 +1,7 @@
 import 'webuntis.dart';
 import 'dart:core';
 
-Future<List> getFreeRooms(untis, checkRooms) async {
+Future<List> getFreeRooms(checkRooms) async {
   var time = currentTime();
   print(time);
   String freeRooms = "\n";
@@ -51,6 +51,7 @@ Future<List> getFreeRooms(untis, checkRooms) async {
         }
       }
     });
+  });
 
   return [freeRooms, blockedRooms];
 }
