@@ -3,7 +3,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'utils.dart';
 
 const List<String> buildings = <String>['A', 'B', 'C', 'D'];
-const List<String> floors =  <String>['E', 'H', '1', '2', '3', '4', '5'];
 
 void main() {
   runApp(const MyApp());
@@ -56,7 +55,7 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   void _getFreeRooms() async {
-    List<dynamic> rooms = await getFreeRooms(selectedBuilding + selectedFloor);
+    List<dynamic> rooms = await getFreeRooms(selectedBuilding);
     setState(() {
       freeRooms = rooms[0];
       blockedRooms = rooms[1];
@@ -137,25 +136,6 @@ class _MyHomePageState extends State<MyHomePage> {
                     );
                   }).toList(),
                 )
-              ),
-              Padding(
-                  padding: const EdgeInsets.fromLTRB(20,0,0,0),
-                  child: DropdownButton<String>(
-                    value: selectedFloor,
-                    elevation: 16,
-                    style: const TextStyle(color: Colors.amber),
-                    onChanged: (String? value) {
-                      setState(() {
-                        selectedFloor = value!;
-                      });
-                    },
-                    items: floors.map<DropdownMenuItem<String>>((String value) {
-                      return DropdownMenuItem<String>(
-                        value: value,
-                        child: Text(value),
-                      );
-                    }).toList(),
-                  )
               ),
               IconButton(
                 icon: const Icon(Icons.settings),
