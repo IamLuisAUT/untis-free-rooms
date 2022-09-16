@@ -1,15 +1,11 @@
 import 'webuntis.dart';
 import 'dart:core';
 
-Future<List> getFreeRooms(checkRooms) async {
+Future<List> getFreeRooms(untis, checkRooms) async {
   var time = currentTime();
   print(time);
   String freeRooms = "\n";
   String blockedRooms = "\n";
-  
-  WebUntis untis = WebUntis("XXX", "XXX", "XXX",
-      "XXX", "XXX");
-  await untis.login().then((value) async {
     await untis.getRooms().then((rooms) async {
       for(int r = 0; r < rooms.length; r++) {
         var room = rooms[r];
@@ -23,11 +19,9 @@ Future<List> getFreeRooms(checkRooms) async {
 
             for(int t = 0; t < timetable.length; t++) {
               var hour = timetable[t];
-              print(hour);
               if (hour["startTime"] < time &&
                   time < hour["endTime"] &&
                   hour["code"].toString() != "cancelled") {
-                print('a');
                 isFree = false;
               }
               if (time < hour["startTime"] &&
@@ -51,7 +45,6 @@ Future<List> getFreeRooms(checkRooms) async {
         }
       }
     });
-  });
 
   return [freeRooms, blockedRooms];
 }

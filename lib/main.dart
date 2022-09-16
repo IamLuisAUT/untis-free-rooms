@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'utils.dart';
+import 'webuntis.dart';
 
 const List<String> buildings = <String>['A', 'B', 'C', 'D'];
+const List<String> floors =  <String>['E', 'H', '1', '2', '3', '4', '5'];
 
 void main() {
   runApp(const MyApp());
@@ -37,10 +39,13 @@ class _MyHomePageState extends State<MyHomePage> {
   bool preferencesInit = false;
 
   String selectedBuilding = buildings.first;
+  String selectedFloor = floors.first;
+
   String schoolname = '';
   String username = '';
   String password = '';
   String baseUrl = '';
+  late WebUntis untis;
 
   final _schoolTextController = TextEditingController();
   final _usernameTextController = TextEditingController();
@@ -55,7 +60,7 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   void _getFreeRooms() async {
-    List<dynamic> rooms = await getFreeRooms(selectedBuilding);
+    List<dynamic> rooms = await getFreeRooms(untis, selectedBuilding + selectedFloor);
     setState(() {
       freeRooms = rooms[0];
       blockedRooms = rooms[1];
@@ -95,6 +100,14 @@ class _MyHomePageState extends State<MyHomePage> {
     _passwordTextController.text = password;
     _baseUrlTextController.text = baseUrl;
   }
+
+  void newUntisSession() {
+    untis = WebUntis(schoolname, username, password, baseUrl, "Awesome");
+    untis.login().then((value) {
+      return;
+    });
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -136,6 +149,25 @@ class _MyHomePageState extends State<MyHomePage> {
                     );
                   }).toList(),
                 )
+              ),
+              Padding(
+                  padding: const EdgeInsets.fromLTRB(20,0,0,0),
+                  child: DropdownButton<String>(
+                    value: selectedFloor,
+                    elevation: 16,
+                    style: const TextStyle(color: Colors.amber),
+                    onChanged: (String? value) {
+                      setState(() {
+                        selectedFloor = value!;
+                      });
+                    },
+                    items: floors.map<DropdownMenuItem<String>>((String value) {
+                      return DropdownMenuItem<String>(
+                        value: value,
+                        child: Text(value),
+                      );
+                    }).toList(),
+                  )
               ),
               IconButton(
                 icon: const Icon(Icons.settings),
@@ -183,65 +215,71 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget _buildLoginDialog(BuildContext context) {
     return AlertDialog(
       title: const Text('Login Data'),
-      content: Column(
-        children: <Widget>[
-          Flexible(
-            flex: 1,
-            fit: FlexFit.tight,
-            child: ListView(
-              children: <Widget>[
-                Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    Row(
-                      mainAxisSize: MainAxisSize.max,
-                      children: <Widget>[
-                        const Text("Schoolname: "),
-                        Expanded(
-                          child: TextField(controller: _schoolTextController),
-                        )
-                      ]
-                    ),
-                    Row(
-                      mainAxisSize: MainAxisSize.max,
-                      children: <Widget>[
-                        const Text("Username: "),
-                        Expanded(
-                          child: TextField(controller: _usernameTextController),
-                        )
-                      ]
-                    ),
-                    Row(
-                      mainAxisSize: MainAxisSize.max,
-                      children: <Widget>[
-                        const Text("Password: "),
-                        Expanded(
-                          child: TextField(controller: _passwordTextController),
-                        )
-                      ]
-                    ),
-                    Row(
-                      mainAxisSize: MainAxisSize.max,
-                      children: <Widget>[
-                        const Text("Base Url: "),
-                        Expanded(
-                          child: TextField(controller: _baseUrlTextController),
-                        )
-                      ]
-                    ),
-                  ],
+      content: Container (
+          width: MediaQuery.of(context).size.width * 0.9,
+          height: MediaQuery.of(context).size.height * 0.9,
+          child: Column (
+          children: <Widget>[
+            Flexible(
+                flex: 1,
+                fit: FlexFit.tight,
+                child: ListView(
+                    shrinkWrap: true,
+                    children: <Widget>[
+                      Column(
+                        mainAxisSize: MainAxisSize.min,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          Row(
+                              mainAxisSize: MainAxisSize.max,
+                              children: <Widget>[
+                                const Text("Schoolname: "),
+                                Expanded(
+                                  child: TextField(controller: _schoolTextController),
+                                )
+                              ]
+                          ),
+                          Row(
+                              mainAxisSize: MainAxisSize.max,
+                              children: <Widget>[
+                                const Text("Username: "),
+                                Expanded(
+                                  child: TextField(controller: _usernameTextController),
+                                )
+                              ]
+                          ),
+                          Row(
+                              mainAxisSize: MainAxisSize.max,
+                              children: <Widget>[
+                                const Text("Password: "),
+                                Expanded(
+                                  child: TextField(controller: _passwordTextController),
+                                )
+                              ]
+                          ),
+                          Row(
+                              mainAxisSize: MainAxisSize.max,
+                              children: <Widget>[
+                                const Text("Base Url: "),
+                                Expanded(
+                                  child: TextField(controller: _baseUrlTextController),
+                                )
+                              ]
+                          ),
+                        ],
+                      )
+                    ]
                 )
-              ]
             )
-          )
-        ],
+          ],
+        ),
       ),
       actions: <Widget>[
         TextButton(
           onPressed: () {
             Navigator.of(context).pop();
             _saveLogin();
+            newUntisSession();
           },
           child: const Text('Save'),
         ),
