@@ -1,5 +1,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.untis_free_rooms">
+    <uses-permission android:name="android.permission.INTERNET"/>
    <application
         android:label="untis_free_rooms"
         android:name="${applicationName}"
@@ -30,5 +31,5 @@
         <meta-data
             android:name="flutterEmbedding"
             android:value="2" />
-    </application>
+   </application>
 </manifest>
