@@ -45,6 +45,7 @@ class _MyHomePageState extends State<MyHomePage> {
   String username = '';
   String password = '';
   String baseUrl = '';
+  DateTime date = DateTime.now();
   late WebUntis untis;
 
   final _schoolTextController = TextEditingController();
@@ -60,7 +61,7 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   void _getFreeRooms() async {
-    List<dynamic> rooms = await getFreeRooms(untis, selectedBuilding + selectedFloor);
+    List<dynamic> rooms = await getFreeRooms(untis, selectedBuilding + selectedFloor, date);
     setState(() {
       freeRooms = rooms[0];
       blockedRooms = rooms[1];
@@ -170,7 +171,14 @@ class _MyHomePageState extends State<MyHomePage> {
                   )
               ),
               IconButton(
-                icon: const Icon(Icons.settings),
+                icon: const Icon(Icons.calendar_month),
+                onPressed: () async {
+                  var pickedDate = await pickDateAndTime();
+                  if(pickedDate!=null) date=pickedDate;
+                },
+              ),
+              IconButton(
+                icon: const Icon(Icons.key),
                 onPressed: () {
                   showDialog(context: context, builder: (BuildContext context) => _buildLoginDialog(context));
                 },
@@ -286,4 +294,14 @@ class _MyHomePageState extends State<MyHomePage> {
       ],
     );
   }
+
+  Future<DateTime?> pickDateAndTime() async {
+    DateTime? date = await showDatePicker(context: context, initialDate: DateTime.now(), firstDate: DateTime(1900), lastDate: DateTime(2100));
+    if(date == null) return null;
+    TimeOfDay? time = await showTimePicker(context: context, initialTime: TimeOfDay(hour: DateTime.now().hour, minute: DateTime.now().minute));
+    if(time == null) return null;
+    return DateTime(date.year, date.month, date.day, time.hour, time.minute);
+  }
+
+
 }

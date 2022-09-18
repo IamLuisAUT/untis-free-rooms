@@ -1,9 +1,8 @@
 import 'webuntis.dart';
 import 'dart:core';
 
-Future<List> getFreeRooms(untis, checkRooms) async {
-  var time = currentTime();
-  print(time);
+Future<List> getFreeRooms(untis, checkRooms, DateTime date) async {
+  int time = timeToUntisTime(date);
   String freeRooms = "\n";
   String blockedRooms = "\n";
     await untis.getRooms().then((rooms) async {
@@ -11,7 +10,7 @@ Future<List> getFreeRooms(untis, checkRooms) async {
         var room = rooms[r];
         if (room['name'].startsWith(checkRooms) &&
             room['longName'] == 'Stammklasse') {
-          var timetable = await untis.getTimetableFor(room['id'], WebUntis.types['room']);
+          var timetable = await untis.getTimetableFor(room['id'], WebUntis.types['room'], date);
 
           if (timetable.length != 0) {
             bool isFree = true;
@@ -36,6 +35,7 @@ Future<List> getFreeRooms(untis, checkRooms) async {
                 {
                     return ((current - time).abs() < (previous - time).abs() ? current : previous);
                 });
+                endTimeOfEmptyRoom = endTimeOfEmptyRoom.toString().length == 3 ? "0$endTimeOfEmptyRoom" : endTimeOfEmptyRoom;
                 freeRooms += "${room['name']} until ${endTimeOfEmptyRoom.toString().replaceAll(endTimeOfEmptyRoom.toString().substring(1,2), "${endTimeOfEmptyRoom.toString().substring(1,2)}:")}\n";
               } else {
                 freeRooms += "${room['name']}\n";
@@ -56,4 +56,16 @@ Future<List> getFreeRooms(untis, checkRooms) async {
 int currentTime() {
   return int.parse(
       "${DateTime.now().hour}${DateTime.now().minute.toString().padLeft(2, '0')}");
+}
+
+String dateToUntisDate(DateTime date) {
+  return (
+      date.year.toString() + date.month.toString().padLeft(2, '0') + date.day.toString().padLeft(2, '0')
+  );
+}
+
+int timeToUntisTime(DateTime time) {
+  return int.parse(
+    time.hour.toString() + time.minute.toString().padLeft(2, '0')
+  );
 }

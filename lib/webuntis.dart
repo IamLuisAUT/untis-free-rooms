@@ -2,6 +2,8 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'dart:async';
 
+import 'package:untis_free_rooms/utils.dart';
+
 class WebUntis {
   String school = "";
   String username = "";
@@ -46,12 +48,12 @@ class WebUntis {
     return await _request('getRooms', {});
   }
 
-  dynamic getTimetableFor(elementId, type) async {
+  dynamic getTimetableFor(elementId, type, DateTime date) async {
     return await _request('getTimetable', <String, dynamic>{
       "id": "$elementId",
       "type": "$type", //4 = rooms
-      // "startDate": "$startDate",
-      // "endDate": "$endDate"
+      "startDate": dateToUntisDate(DateTime(date.year, date.month, date.day)),
+      "endDate": dateToUntisDate(DateTime(date.year, date.month, date.day))
     });
   }
 
