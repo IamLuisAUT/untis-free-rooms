@@ -50,7 +50,6 @@ class WebUntis {
     return await _request('getTimetable', <String, dynamic>{
       "id": "$elementId",
       "type": "$type", //4 = rooms
-
       // "startDate": "$startDate",
       // "endDate": "$endDate"
     });

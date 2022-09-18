@@ -32,15 +32,19 @@ Future<List> getFreeRooms(untis, checkRooms) async {
             }
             if(isFree) {
               if(startingHours.isNotEmpty) {
-                freeRooms += room['name'] + ' until TBP\n';
+                var endTimeOfEmptyRoom = startingHours.reduce((previous, current)
+                {
+                    return ((current - time).abs() < (previous - time).abs() ? current : previous);
+                });
+                freeRooms += "${room['name']} until ${endTimeOfEmptyRoom.toString().replaceAll(endTimeOfEmptyRoom.toString().substring(1,2), "${endTimeOfEmptyRoom.toString().substring(1,2)}:")}\n";
               } else {
-                freeRooms += room['name'] + '\n';
+                freeRooms += "${room['name']}\n";
               }
             } else {
-              blockedRooms += room['name'] + '\n';
+              blockedRooms += "${room['name']}\n";;
             }
           } else {
-            freeRooms += room['name'] + '\n';
+            freeRooms += "${room['name']}\n";
           }
         }
       }
