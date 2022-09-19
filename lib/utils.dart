@@ -41,7 +41,7 @@ Future<List> getFreeRooms(untis, checkRooms, DateTime date) async {
                 freeRooms += "${room['name']}\n";
               }
             } else {
-              blockedRooms += "${room['name']}\n";;
+              blockedRooms += "${room['name']}\n";
             }
           } else {
             freeRooms += "${room['name']}\n";

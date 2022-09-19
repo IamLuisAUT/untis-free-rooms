@@ -27,7 +27,7 @@ class WebUntis {
           },
           "jsonrpc": "2.0"
         }));
-    sessionId = jsonDecode(response.body)['result']['sessionId'];
+    if(jsonDecode(response.body)['result'] != null && jsonDecode(response.body)['result']['code'] == null && jsonDecode(response.body)['result']['sessionId'] != null) sessionId = jsonDecode(response.body)['result']['sessionId'];
     return response;
   }
 

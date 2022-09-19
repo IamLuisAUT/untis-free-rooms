@@ -61,10 +61,16 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   void _getFreeRooms() async {
+    setState(() {
+      _load = true;
+      freeRooms = "";
+      blockedRooms = "";
+    });
     List<dynamic> rooms = await getFreeRooms(untis, selectedBuilding + selectedFloor, date);
     setState(() {
       freeRooms = rooms[0];
       blockedRooms = rooms[1];
+      _load = false;
     });
   }
 
@@ -100,130 +106,153 @@ class _MyHomePageState extends State<MyHomePage> {
     _usernameTextController.text = username;
     _passwordTextController.text = password;
     _baseUrlTextController.text = baseUrl;
+
+    newUntisSession();
   }
 
   void newUntisSession() {
+    // TODO: nullcheck on params
     untis = WebUntis(schoolname, username, password, baseUrl, "Awesome");
-    untis.login().then((value) {
-      return;
+    untis.login().then((value) async {
+      bool authenticated = await untis.validateSession();
+      if(!authenticated) {showDialog(
+          context: context, builder: (BuildContext context) => _buildLoginDialog(context));
+      }
     });
   }
 
+  bool _load = false;
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: null,
-      body: SafeArea(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: <Widget>[
-          const Padding(
-            padding: EdgeInsets.fromLTRB(0, 20, 0, 10),
-            child: Text(
-              "Untis Free-Rooms",
-              style: TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.bold
-              )
-            )
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
+    Widget loadingIndicator = _load ? const SizedBox(
+      width: 90.0,
+      height: 90.0,
+      child: Padding(padding: EdgeInsets.all(8.0),child: Center(child: CircularProgressIndicator())),
+    ):Container();
+    return LayoutBuilder(
+      builder: (context, size) {
+        return Scaffold(
+          appBar: null,
+          body: Stack(
             children: <Widget>[
-              const Text("Building:"),
-              Padding(
-                padding: const EdgeInsets.fromLTRB(20,0,0,0),
-                child: DropdownButton<String>(
-                  value: selectedBuilding,
-                  elevation: 16,
-                  style: const TextStyle(color: Colors.amber),
-                  onChanged: (String? value) {
-                    setState(() {
-                      selectedBuilding = value!;
-                    });
-                  },
-                  items: buildings.map<DropdownMenuItem<String>>((String value) {
-                    return DropdownMenuItem<String>(
-                      value: value,
-                      child: Text(value),
-                    );
-                  }).toList(),
-                )
-              ),
-              Padding(
-                  padding: const EdgeInsets.fromLTRB(20,0,0,0),
-                  child: DropdownButton<String>(
-                    value: selectedFloor,
-                    elevation: 16,
-                    style: const TextStyle(color: Colors.amber),
-                    onChanged: (String? value) {
-                      setState(() {
-                        selectedFloor = value!;
-                      });
-                    },
-                    items: floors.map<DropdownMenuItem<String>>((String value) {
-                      return DropdownMenuItem<String>(
-                        value: value,
-                        child: Text(value),
-                      );
-                    }).toList(),
-                  )
-              ),
-              IconButton(
-                icon: const Icon(Icons.calendar_month),
-                onPressed: () async {
-                  var pickedDate = await pickDateAndTime();
-                  if(pickedDate!=null) date=pickedDate;
-                },
-              ),
-              IconButton(
-                icon: const Icon(Icons.key),
-                onPressed: () {
-                  showDialog(context: context, builder: (BuildContext context) => _buildLoginDialog(context));
-                },
-              )
-            ],
-          ),
-          Expanded(
-            child: ListView(
-              children: <Widget>[
-                Column(
+              SafeArea(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
                   children: <Widget>[
-                    Text(
-                      freeRooms,
-                      style: const TextStyle(
-                          fontSize: 20,
-                          color: Colors.green
-                      )
+                    const Padding(
+                        padding: EdgeInsets.fromLTRB(0, 20, 0, 10),
+                        child: Text(
+                            "Untis Free-Rooms",
+                            style: TextStyle(
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold
+                            )
+                        )
                     ),
-                    Text(
-                        blockedRooms,
-                        style: const TextStyle(
-                            fontSize: 20,
-                            color: Colors.red
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        const Text("Building:"),
+                        Padding(
+                            padding: const EdgeInsets.fromLTRB(20,0,0,0),
+                            child: DropdownButton<String>(
+                              value: selectedBuilding,
+                              elevation: 16,
+                              style: const TextStyle(color: Colors.amber),
+                              onChanged: (String? value) {
+                                setState(() {
+                                  selectedBuilding = value!;
+                                });
+                              },
+                              items: buildings.map<DropdownMenuItem<String>>((String value) {
+                                return DropdownMenuItem<String>(
+                                  value: value,
+                                  child: Text(value),
+                                );
+                              }).toList(),
+                            )
+                        ),
+                        Padding(
+                            padding: const EdgeInsets.fromLTRB(20,0,0,0),
+                            child: DropdownButton<String>(
+                              value: selectedFloor,
+                              elevation: 16,
+                              style: const TextStyle(color: Colors.amber),
+                              onChanged: (String? value) {
+                                setState(() {
+                                  selectedFloor = value!;
+                                });
+                              },
+                              items: floors.map<DropdownMenuItem<String>>((String value) {
+                                return DropdownMenuItem<String>(
+                                  value: value,
+                                  child: Text(value),
+                                );
+                              }).toList(),
+                            )
+                        ),
+                        IconButton(
+                          icon: const Icon(Icons.calendar_month),
+                          onPressed: () async {
+                            var pickedDate = await pickDateAndTime();
+                            if(pickedDate!=null) date=pickedDate;
+                          },
+                        ),
+                        IconButton(
+                          icon: const Icon(Icons.key),
+                          onPressed: () {
+                            showDialog(context: context, builder: (BuildContext context) => _buildLoginDialog(context));
+                          },
+                        )
+                      ],
+                    ),
+                    Expanded(
+                        child: ListView(
+                            children: <Widget>[
+                              Column(
+                                children: <Widget>[
+                                  Text(
+                                      freeRooms,
+                                      style: const TextStyle(
+                                          fontSize: 20,
+                                          color: Colors.green
+                                      )
+                                  ),
+                                  Text(
+                                      blockedRooms,
+                                      style: const TextStyle(
+                                          fontSize: 20,
+                                          color: Colors.red
+                                      )
+                                  )
+                                ],
+                              )
+                            ]
                         )
                     )
                   ],
-                )
-              ]
-            )
-          )
-        ],
-        ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _getFreeRooms,
-        tooltip: 'Search',
-        child: const Icon(Icons.access_time),
-      ),
-    );
+                ),
+              ),
+              Align(
+                alignment: FractionalOffset.center,
+                child: loadingIndicator
+              )
+            ],
+          ),
+          floatingActionButton: FloatingActionButton(
+            onPressed: _getFreeRooms,
+            tooltip: 'Search',
+            child: const Icon(Icons.access_time),
+          ),
+        );
+      });
   }
 
   Widget _buildLoginDialog(BuildContext context) {
     return AlertDialog(
       title: const Text('Login Data'),
-      content: Container (
+      content: SizedBox (
           width: MediaQuery.of(context).size.width * 0.9,
           height: MediaQuery.of(context).size.height * 0.9,
           child: Column (
