@@ -72,6 +72,15 @@ class WebUntis {
         .toList();
   }
 
+  Future<bool> logout() async {
+    if (sessionId == "") return false;
+    if(!await validateSession()) return false;
+    print(sessionId);
+    var response = await _request('logout', {});
+    print(response);
+    return true;
+  }
+
   static const types = {
     "class": 1,
     "teacher": 2,

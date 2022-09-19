@@ -114,6 +114,8 @@ class _MyHomePageState extends State<MyHomePage> {
     // TODO: nullcheck on params
     untis = WebUntis(schoolname, username, password, baseUrl, "Awesome");
     untis.login().then((value) async {
+      print(untis.sessionId);
+      print(await untis.validateSession());
       bool authenticated = await untis.validateSession();
       if(!authenticated) {showDialog(
           context: context, builder: (BuildContext context) => _buildLoginDialog(context));
@@ -312,6 +314,28 @@ class _MyHomePageState extends State<MyHomePage> {
         ),
       ),
       actions: <Widget>[
+        FutureBuilder<bool>(
+            future: untis.validateSession(),
+            builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {
+              late Widget child;
+              if (snapshot.hasData) {
+                if (snapshot.data == true) {
+                  return TextButton(
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                      untis.logout();
+                    },
+                    child: const Text('Logout'),
+                  );
+                }
+              } else if (snapshot.hasError) {
+                return const SizedBox.shrink();
+              } else {
+                return const CircularProgressIndicator();
+              }
+              return const SizedBox.shrink();
+            }
+        ),
         TextButton(
           onPressed: () {
             Navigator.of(context).pop();
