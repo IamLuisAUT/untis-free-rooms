@@ -144,15 +144,24 @@ class _MyHomePageState extends State<MyHomePage> {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: <Widget>[
-                    const Padding(
-                        padding: EdgeInsets.fromLTRB(0, 20, 0, 10),
-                        child: Text(
-                            "Untis Free-Rooms",
-                            style: TextStyle(
-                                fontSize: 20,
-                                fontWeight: FontWeight.bold
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(0, 20, 0, 10),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: const <Widget>[
+                          Icon(Icons.event_available),
+                          Padding(
+                            padding: EdgeInsets.fromLTRB(10,0,0,0),
+                            child: Text(
+                              "Untis Free-Rooms",
+                              style: TextStyle(
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.bold
+                              )
                             )
-                        )
+                          )
+                        ]
+                      )
                     ),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
@@ -319,7 +328,6 @@ class _MyHomePageState extends State<MyHomePage> {
         FutureBuilder<bool>(
             future: untis.validateSession(),
             builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {
-              late Widget child;
               if (snapshot.hasData) {
                 if (snapshot.data == true) {
                   return TextButton(
