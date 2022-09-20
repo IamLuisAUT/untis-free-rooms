@@ -9,10 +9,10 @@ class WebUntis {
   String username = "";
   String password = "";
   String baseUrl = "";
-  String id = "Awesome";
+  static const String id = "Quando";
   String sessionId = "";
 
-  WebUntis(this.school, this.username, this.password, this.baseUrl, this.id);
+  WebUntis(this.school, this.username, this.password, this.baseUrl);
 
   Future<http.Response> login() async {
     final response = await http.post(
@@ -36,7 +36,7 @@ class WebUntis {
         Uri.parse("https://$baseUrl/WebUntis/jsonrpc.do?school=$school"),
         body: jsonEncode({
           "method": method,
-          "id": "Awesome",
+          "id": id,
           "params": params,
           "jsonrpc": "2.0"
         }),
@@ -75,9 +75,7 @@ class WebUntis {
   Future<bool> logout() async {
     if (sessionId == "") return false;
     if(!await validateSession()) return false;
-    print(sessionId);
-    var response = await _request('logout', {});
-    print(response);
+    await _request('logout', {});
     return true;
   }
 

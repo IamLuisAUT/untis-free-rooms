@@ -111,16 +111,18 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   void newUntisSession() {
-    // TODO: nullcheck on params
-    untis = WebUntis(schoolname, username, password, baseUrl, "Awesome");
-    untis.login().then((value) async {
-      print(untis.sessionId);
-      print(await untis.validateSession());
-      bool authenticated = await untis.validateSession();
-      if(!authenticated) {showDialog(
-          context: context, builder: (BuildContext context) => _buildLoginDialog(context));
-      }
-    });
+    if(
+      schoolname.isNotEmpty && username.isNotEmpty &&
+      password.isNotEmpty && baseUrl.isNotEmpty
+      ) {
+      untis = WebUntis(schoolname, username, password, baseUrl);
+      untis.login().then((value) async {
+        bool authenticated = await untis.validateSession();
+        if(!authenticated) {showDialog(
+            context: context, builder: (BuildContext context) => _buildLoginDialog(context));
+        }
+      });
+    }
   }
 
   bool _load = false;
