@@ -160,7 +160,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   children: <Widget>[
                     Padding(
                         padding: EdgeInsets.fromLTRB(0, 20 + paddingTop, 0, 10),
-                        child: Text(
+                        child: const Text(
                             "Untis Free-Rooms",
                             style: TextStyle(
                                 fontSize: 20,
@@ -290,30 +290,6 @@ class _MyHomePageState extends State<MyHomePage> {
       ],
     ),
     ));
-  }
-
-  _buildErrorDialog(BuildContext context, int errorCode) {
-     return AlertDialog(
-        title: const Text('Error'),
-        content: SingleChildScrollView(
-          child: ListBody(
-            children: <Widget>[
-              Text("${WebuntisException.errorCodes[errorCode]}"),
-            ],
-          ),
-        ),
-        actions: <Widget>[
-          TextButton(
-            child: const Text('Ok'),
-            onPressed: () {
-              Navigator.of(context).pop();
-              setState(() {
-                _load = false;
-              });
-            },
-          ),
-        ],
-    );
   }
 
 
