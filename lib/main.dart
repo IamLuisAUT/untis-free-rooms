@@ -140,6 +140,10 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
+    double paddingTop = 0;
+    if(Theme.of(context).platform == TargetPlatform.iOS) {
+      paddingTop = 25;
+    }
     Widget loadingIndicator = _load ? const SizedBox(
       width: 90.0,
       height: 90.0,
@@ -154,8 +158,8 @@ class _MyHomePageState extends State<MyHomePage> {
                 Column(
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: <Widget>[
-                    const Padding(
-                        padding: EdgeInsets.fromLTRB(0, 20, 0, 10),
+                    Padding(
+                        padding: EdgeInsets.fromLTRB(0, 20 + paddingTop, 0, 10),
                         child: Text(
                             "Untis Free-Rooms",
                             style: TextStyle(
