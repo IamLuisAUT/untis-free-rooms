@@ -6,17 +6,20 @@ import 'webuntis.dart';
 const List<String> buildings = <String>['A', 'B', 'C', 'D'];
 const List<String> floors =  <String>['E', 'H', '1', '2', '3', '4', '5'];
 
+
 void main() {
   runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
+  static GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
   const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Untis Free-Rooms',
+      navigatorKey: navigatorKey,
       theme: ThemeData(
         primarySwatch: Colors.amber,
       ),
@@ -66,12 +69,17 @@ class _MyHomePageState extends State<MyHomePage> {
       freeRooms = "";
       blockedRooms = "";
     });
-    List<dynamic> rooms = await getFreeRooms(untis, selectedBuilding + selectedFloor, date);
-    setState(() {
-      freeRooms = rooms[0];
-      blockedRooms = rooms[1];
-      _load = false;
-    });
+    try {
+      List<dynamic> rooms = await getFreeRooms(untis, selectedBuilding + selectedFloor, date);
+      setState(() {
+        freeRooms = rooms[0];
+        blockedRooms = rooms[1];
+        _load = false;
+      });
+    } on WebuntisException catch (e) {
+      _showErrorDialog(context, e.code);
+    }
+
   }
 
   void _saveLogin() async {
@@ -111,18 +119,21 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   void newUntisSession() {
-    if(
-      schoolname.isNotEmpty && username.isNotEmpty &&
-      password.isNotEmpty && baseUrl.isNotEmpty
-      ) {
-      untis = WebUntis(schoolname, username, password, baseUrl);
+    // TODO: nullcheck on params
+    if(schoolname == "" || username == "" || password == "" || baseUrl == "") {
+      showDialog(context: context, builder: (BuildContext context) => _buildLoginDialog(context));
+    }
+    untis = WebUntis(schoolname, username, password, baseUrl);
       untis.login().then((value) async {
         bool authenticated = await untis.validateSession();
-        if(!authenticated) {showDialog(
-            context: context, builder: (BuildContext context) => _buildLoginDialog(context));
+        if(!authenticated) {
+          showDialog(context: context, builder: (BuildContext context) => _buildLoginDialog(context));
+        }
+      }).catchError((e) {
+        if(e is WebuntisException) {
+          _showErrorDialog(context, e.code);
         }
       });
-    }
   }
 
   bool _load = false;
@@ -140,28 +151,18 @@ class _MyHomePageState extends State<MyHomePage> {
           appBar: null,
           body: Stack(
             children: <Widget>[
-              SafeArea(
-                child: Column(
+                Column(
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: <Widget>[
-                    Padding(
-                      padding: const EdgeInsets.fromLTRB(0, 20, 0, 10),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: const <Widget>[
-                          Icon(Icons.event_available),
-                          Padding(
-                            padding: EdgeInsets.fromLTRB(10,0,0,0),
-                            child: Text(
-                              "Untis Free-Rooms",
-                              style: TextStyle(
-                                  fontSize: 20,
-                                  fontWeight: FontWeight.bold
-                              )
+                    const Padding(
+                        padding: EdgeInsets.fromLTRB(0, 20, 0, 10),
+                        child: Text(
+                            "Untis Free-Rooms",
+                            style: TextStyle(
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold
                             )
-                          )
-                        ]
-                      )
+                        )
                     ),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
@@ -209,7 +210,7 @@ class _MyHomePageState extends State<MyHomePage> {
                           icon: const Icon(Icons.calendar_month),
                           onPressed: () async {
                             var pickedDate = await pickDateAndTime();
-                            if(pickedDate!=null) date=pickedDate;
+                            if(pickedDate != null) date = pickedDate;
                           },
                         ),
                         IconButton(
@@ -246,7 +247,6 @@ class _MyHomePageState extends State<MyHomePage> {
                     )
                   ],
                 ),
-              ),
               Align(
                 alignment: FractionalOffset.center,
                 child: loadingIndicator
@@ -261,6 +261,57 @@ class _MyHomePageState extends State<MyHomePage> {
         );
       });
   }
+
+  _showErrorDialog(BuildContext context, int errorCode) {
+    showDialog(context: context, builder: (context) => Center (
+      child: AlertDialog(
+    title: const Text('Error'),
+      content: SingleChildScrollView(
+        child: ListBody(
+          children: <Widget>[
+            Text("${WebuntisException.errorCodes[errorCode]}"),
+          ],
+        ),
+      ),
+      actions: <Widget>[
+        TextButton(
+          child: const Text('Ok'),
+          onPressed: () {
+            Navigator.of(context).pop();
+            setState(() {
+              _load = false;
+            });
+          },
+        ),
+      ],
+    ),
+    ));
+  }
+
+  _buildErrorDialog(BuildContext context, int errorCode) {
+     return AlertDialog(
+        title: const Text('Error'),
+        content: SingleChildScrollView(
+          child: ListBody(
+            children: <Widget>[
+              Text("${WebuntisException.errorCodes[errorCode]}"),
+            ],
+          ),
+        ),
+        actions: <Widget>[
+          TextButton(
+            child: const Text('Ok'),
+            onPressed: () {
+              Navigator.of(context).pop();
+              setState(() {
+                _load = false;
+              });
+            },
+          ),
+        ],
+    );
+  }
+
 
   Widget _buildLoginDialog(BuildContext context) {
     return AlertDialog(
@@ -326,20 +377,27 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
       actions: <Widget>[
         FutureBuilder<bool>(
-            future: untis.validateSession(),
+            future: untis.validateSession().catchError((e) {
+              if(e is WebuntisException) {
+                Navigator.of(context).pop();
+                _showErrorDialog(context, e.code);
+              }
+            }),
             builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {
               if (snapshot.hasData) {
                 if (snapshot.data == true) {
                   return TextButton(
                     onPressed: () {
-                      Navigator.of(context).pop();
                       untis.logout();
                     },
                     child: const Text('Logout'),
                   );
                 }
               } else if (snapshot.hasError) {
-                return const SizedBox.shrink();
+                if(snapshot.error is WebuntisException) {
+                  Navigator.of(context).pop();
+                  return const SizedBox.shrink();
+                }
               } else {
                 return const CircularProgressIndicator();
               }
@@ -365,6 +423,4 @@ class _MyHomePageState extends State<MyHomePage> {
     if(time == null) return null;
     return DateTime(date.year, date.month, date.day, time.hour, time.minute);
   }
-
-
 }
