@@ -102,7 +102,7 @@ class WebUntis {
     try {
       if (sessionId == "") throw WebuntisException(4);
       if(!await validateSession()) throw WebuntisException(4);
-      var response = await _request('logout', {});
+      await _request('logout', {});
       return true;
     } on WebuntisException {
       rethrow;
