@@ -119,7 +119,6 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   void newUntisSession() {
-    // TODO: nullcheck on params
     if(schoolname == "" || username == "" || password == "" || baseUrl == "") {
       showDialog(context: context, builder: (BuildContext context) => _buildLoginDialog(context));
     }
