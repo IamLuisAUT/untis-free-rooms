@@ -49,9 +49,7 @@
 <!-- ABOUT THE PROJECT -->
 ## About The Project
 
-<img src="https://github.com/IamLuisAUT/untis-free-rooms/blob/main/screenshot.png" alt="Screenshot" width="300px" height="auto">
-<br>
-<br>
+<img src="https://github.com/IamLuisAUT/untis-free-rooms/blob/main/screenshot.png" alt="Screenshot" width="400px" height="auto">
 This app allows searching for free rooms in your school. Additionally, filters, such as date and time as well as buildings and floors, are available.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
