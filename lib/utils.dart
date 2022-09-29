@@ -36,7 +36,7 @@ Future<List> getFreeRooms(untis, checkRooms, DateTime date) async {
                     return ((current - time).abs() < (previous - time).abs() ? current : previous);
                 });
                 endTimeOfEmptyRoom = endTimeOfEmptyRoom.toString().length == 3 ? "0$endTimeOfEmptyRoom" : endTimeOfEmptyRoom;
-                freeRooms += "${room['name']} until ${formatUntisTime(endTimeOfEmptyRoom)}";
+                freeRooms += "${room['name']} until ${formatUntisTime(endTimeOfEmptyRoom)}\n";
               } else {
                 freeRooms += "${room['name']}\n";
               }
