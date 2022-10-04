@@ -55,6 +55,8 @@ class WebUntis {
             "jsonrpc": "2.0"
           }),
           headers: <String, String>{"Cookie": "JSESSIONID=$sessionId"});
+      if(jsonDecode(response.body)["error"] != null
+          && jsonDecode(response.body)["error"]["code"] == -8520 /* not authenticated */) throw WebuntisException(4);
       if(jsonDecode(response.body)==null || jsonDecode(response.body)['result'] == null) throw WebuntisException(3);
       return jsonDecode(response.body)['result'];
     } on SocketException {
@@ -93,7 +95,10 @@ class WebUntis {
       if (sessionId == "") return false;
       var response = await _request("getLatestImportTime", {});
       return response is int;
-    } on WebuntisException {
+    } on WebuntisException catch(e) {
+      if(e.code == 4) {
+        return false;
+      }
       rethrow;
     }
   }

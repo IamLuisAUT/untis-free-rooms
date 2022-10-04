@@ -368,6 +368,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   return TextButton(
                     onPressed: () {
                       untis.logout();
+                      Navigator.pop(context);
                     },
                     child: const Text('Logout'),
                   );
