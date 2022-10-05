@@ -122,6 +122,7 @@ class _MyHomePageState extends State<MyHomePage> {
     _defaultBuildingTextController.text = defaultBuilding;
 
     _buildingTextController.text = _defaultBuildingTextController.value.text;
+    selectedBuilding = _defaultBuildingTextController.value.text;
     newUntisSession();
   }
 
