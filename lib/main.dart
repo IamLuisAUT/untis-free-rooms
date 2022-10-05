@@ -41,8 +41,7 @@ class _MyHomePageState extends State<MyHomePage> {
   late final preferences;
   bool preferencesInit = false;
 
-  String selectedBuilding = buildings.first;
-  String selectedFloor = floors.first;
+  String selectedBuilding = "";
 
   String schoolname = '';
   String username = '';
@@ -70,7 +69,7 @@ class _MyHomePageState extends State<MyHomePage> {
       blockedRooms = "";
     });
     try {
-      List<dynamic> rooms = await getFreeRooms(untis, selectedBuilding + selectedFloor, date);
+      List<dynamic> rooms = await getFreeRooms(untis, selectedBuilding, date);
       setState(() {
         freeRooms = rooms[0];
         blockedRooms = rooms[1];
@@ -171,42 +170,15 @@ class _MyHomePageState extends State<MyHomePage> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: <Widget>[
                         const Text("Building:"),
-                        Padding(
-                            padding: const EdgeInsets.fromLTRB(20,0,0,0),
-                            child: DropdownButton<String>(
-                              value: selectedBuilding,
-                              elevation: 16,
-                              style: const TextStyle(color: Colors.amber),
-                              onChanged: (String? value) {
+                        Container(
+                            width: MediaQuery.of(context).size.width*0.2,
+                            margin: const EdgeInsets.only(left: 10.0, right: 10.0),
+                            child: TextField(
+                              onChanged: (value) {
                                 setState(() {
-                                  selectedBuilding = value!;
+                                  selectedBuilding = value;
                                 });
-                              },
-                              items: buildings.map<DropdownMenuItem<String>>((String value) {
-                                return DropdownMenuItem<String>(
-                                  value: value,
-                                  child: Text(value),
-                                );
-                              }).toList(),
-                            )
-                        ),
-                        Padding(
-                            padding: const EdgeInsets.fromLTRB(20,0,0,0),
-                            child: DropdownButton<String>(
-                              value: selectedFloor,
-                              elevation: 16,
-                              style: const TextStyle(color: Colors.amber),
-                              onChanged: (String? value) {
-                                setState(() {
-                                  selectedFloor = value!;
-                                });
-                              },
-                              items: floors.map<DropdownMenuItem<String>>((String value) {
-                                return DropdownMenuItem<String>(
-                                  value: value,
-                                  child: Text(value),
-                                );
-                              }).toList(),
+                              }
                             )
                         ),
                         IconButton(
