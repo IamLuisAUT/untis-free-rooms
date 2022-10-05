@@ -47,6 +47,7 @@ class _MyHomePageState extends State<MyHomePage> {
   String username = '';
   String password = '';
   String baseUrl = '';
+  String defaultBuilding = '';
   DateTime date = DateTime.now();
   late WebUntis untis;
 
@@ -54,6 +55,8 @@ class _MyHomePageState extends State<MyHomePage> {
   final _usernameTextController = TextEditingController();
   final _passwordTextController = TextEditingController();
   final _baseUrlTextController = TextEditingController();
+  final _defaultBuildingTextController = TextEditingController();
+  final _buildingTextController = TextEditingController();
 
   String freeRooms = '-';
   String blockedRooms = '-';
@@ -86,6 +89,7 @@ class _MyHomePageState extends State<MyHomePage> {
     username = _usernameTextController.value.text;
     password = _passwordTextController.value.text;
     baseUrl = _baseUrlTextController.value.text;
+    defaultBuilding = _defaultBuildingTextController.value.text;
 
     if(!preferencesInit) {
       preferences = await SharedPreferences.getInstance();
@@ -96,6 +100,7 @@ class _MyHomePageState extends State<MyHomePage> {
     await preferences.setString('username', username);
     await preferences.setString('password', password);
     await preferences.setString('baseurl', baseUrl);
+    await preferences.setString('defaultBuilding', defaultBuilding);
   }
 
   void _retrieveLogin() async {
@@ -108,12 +113,15 @@ class _MyHomePageState extends State<MyHomePage> {
     username = preferences.getString('username') ?? '';
     password = preferences.getString('password') ?? '';
     baseUrl = preferences.getString('baseurl') ?? '';
+    defaultBuilding = preferences.getString('defaultBuilding') ?? '';
 
     _schoolTextController.text = schoolname;
     _usernameTextController.text = username;
     _passwordTextController.text = password;
     _baseUrlTextController.text = baseUrl;
+    _defaultBuildingTextController.text = defaultBuilding;
 
+    _buildingTextController.text = _defaultBuildingTextController.value.text;
     newUntisSession();
   }
 
@@ -174,6 +182,7 @@ class _MyHomePageState extends State<MyHomePage> {
                             width: MediaQuery.of(context).size.width*0.2,
                             margin: const EdgeInsets.only(left: 10.0, right: 10.0),
                             child: TextField(
+                              controller: _buildingTextController,
                               onChanged: (value) {
                                 setState(() {
                                   selectedBuilding = value;
@@ -318,6 +327,15 @@ class _MyHomePageState extends State<MyHomePage> {
                                 )
                               ]
                           ),
+                          Row(
+                              mainAxisSize: MainAxisSize.max,
+                              children: <Widget>[
+                                const Text("Default Building: "),
+                                Expanded(
+                                  child: TextField(controller: _defaultBuildingTextController),
+                                )
+                              ]
+                          )
                         ],
                       )
                     ]
