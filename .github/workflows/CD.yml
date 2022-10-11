@@ -29,6 +29,9 @@ jobs:
       - run: flutter pub get
       - run: flutter test
       - run: flutter build apk
+      - uses: actions/upload-artifact@v2
+        with:
+          path: build/app/outputs/flutter-apk/app-release.apk
   release:
     needs: build
   
@@ -37,7 +40,7 @@ jobs:
     steps:
       - uses: "marvinpinto/action-automatic-releases@latest"
         with:
-          repo_token: "${{ secrets.PAT }}"
+          repo_token: "${{ secrets.GITHUB_TOKEN }}"
           prerelease: false
           files: |
             LICENSE.txt
