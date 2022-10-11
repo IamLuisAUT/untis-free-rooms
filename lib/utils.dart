@@ -64,6 +64,12 @@ String dateToUntisDate(DateTime date) {
   );
 }
 
+DateTime untisDateToDate(String untisDate) {
+  return (
+      new DateTime(untisDate.toString().substring(0, 4), untisDate.toString().substring(4, 6), untisDate.toString().substring(6, 8))
+  );
+}
+
 String formatUntisTime(int untisTime) {
   return "${untisTime.toString().padLeft(4,"0").substring(0, 2)}:${untisTime.toString().padLeft(4,"0").substring(2, 4)}";
 }
