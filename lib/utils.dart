@@ -66,7 +66,7 @@ String dateToUntisDate(DateTime date) {
 
 DateTime untisDateToDate(String untisDate) {
   return (
-      new DateTime(untisDate.toString().substring(0, 4), untisDate.toString().substring(4, 6), untisDate.toString().substring(6, 8))
+      DateTime(int.parse(untisDate.toString().substring(0, 4)), int.parse(untisDate.toString().substring(4, 6)), int.parse(untisDate.toString().substring(6, 8)))
   );
 }
 

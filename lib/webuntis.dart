@@ -76,6 +76,14 @@ class WebUntis {
     }
   }
 
+  dynamic getCurrentSchoolyear() async {
+    try {
+      return await _request('getCurrentSchoolyear', {});
+    } on WebuntisException {
+      rethrow;
+    }
+  }
+
   dynamic getTimetableFor(elementId, type, DateTime date) async {
     try {
       return await _request('getTimetable', <String, dynamic>{

@@ -54,8 +54,13 @@ class _MyHomePageState extends State<MyHomePage> {
   String username = '';
   String password = '';
   String baseUrl = '';
+
   String defaultBuilding = '';
+
   DateTime date = DateTime.now();
+  DateTime schoolyearStart = DateTime(1900);
+  DateTime schoolyearEnd = DateTime(2100);
+
   late WebUntis untis;
 
   final _schoolTextController = TextEditingController();
@@ -134,6 +139,10 @@ class _MyHomePageState extends State<MyHomePage> {
     untis = WebUntis(schoolname, username, password, baseUrl);
       untis.login().then((value) async {
         bool authenticated = await untis.validateSession();
+        untis.getCurrentSchoolyear().then((data) {
+          schoolyearStart = untisDateToDate(data["startDate"].toString());
+          schoolyearEnd = untisDateToDate(data["endDate"].toString());
+        });
         if(!authenticated) {
           showDialog(context: context, builder: (BuildContext context) => _buildLoginDialog(context));
         }
@@ -389,7 +398,7 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   Future<DateTime?> pickDateAndTime() async {
-    DateTime? date = await showDatePicker(context: context, initialDate: DateTime.now(), firstDate: DateTime(1900), lastDate: DateTime(2100));
+        DateTime? date = await showDatePicker(context: context, initialDate: DateTime.now(), firstDate: schoolyearStart, lastDate: schoolyearEnd);
     if(date == null) return null;
     TimeOfDay? time = await showTimePicker(context: context, initialTime: TimeOfDay(hour: DateTime.now().hour, minute: DateTime.now().minute));
     if(time == null) return null;
