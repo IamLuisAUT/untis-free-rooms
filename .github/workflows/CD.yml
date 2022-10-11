@@ -5,7 +5,7 @@ on:
   # Triggers the workflow on push or pull request events but only for the "main" branch
   push:
     tags:
-      - "rel_*"
+      - '*'
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
@@ -15,27 +15,39 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - run: echo "Done!"
       - uses: actions/checkout@v3
+        with:
+          token: ${{ secrets.PAT }}
       - uses: actions/setup-java@v2
         with:
           distribution: 'zulu'
           java-version: '11'
       - uses: subosito/flutter-action@v2
         with:
-          flutter-version: '3.0.5'
+          flutter-version: '3.3.1'
       - run: flutter pub get
       - run: flutter test
       - run: flutter build apk
+      - uses: actions/upload-artifact@v2
+        with:
+          name: app-release
+          path: build/app/outputs/flutter-apk/app-release.apk
   release:
     needs: build
   
     runs-on: ubuntu-latest
     
     steps:
+      - uses: actions/download-artifact@v3
+        with:
+          name: app-release
       - uses: "marvinpinto/action-automatic-releases@latest"
         with:
           repo_token: "${{ secrets.GITHUB_TOKEN }}"
           prerelease: false
           files: |
-            LICENSE.txt
             *.apk
+      - uses: geekyeggo/delete-artifact@v1
+        with:
+          name: app-release
