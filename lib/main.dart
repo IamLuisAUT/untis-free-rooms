@@ -46,7 +46,6 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  late final preferences;
   bool preferencesInit = false;
 
   String selectedBuilding = "";
@@ -99,10 +98,7 @@ class _MyHomePageState extends State<MyHomePage> {
     baseUrl = _baseUrlTextController.value.text;
     defaultBuilding = _defaultBuildingTextController.value.text;
 
-    if(!preferencesInit) {
-      preferences = await SharedPreferences.getInstance();
-      preferencesInit = true;
-    }
+    var preferences = await SharedPreferences.getInstance();
 
     await preferences.setString('schoolname', schoolname);
     await preferences.setString('username', username);
@@ -112,10 +108,7 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   void _retrieveLogin() async {
-    if(!preferencesInit) {
-      preferences = await SharedPreferences.getInstance();
-      preferencesInit = true;
-    }
+    var preferences = await SharedPreferences.getInstance();
 
     schoolname = preferences.getString('schoolname') ?? '';
     username = preferences.getString('username') ?? '';
