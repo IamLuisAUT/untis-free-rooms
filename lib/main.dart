@@ -21,16 +21,16 @@ class MyApp extends StatelessWidget {
       title: 'Untis Free-Rooms',
       navigatorKey: navigatorKey,
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSwatch(primarySwatch: Colors.amber).copyWith(secondary: Colors.amber),
-        brightness: Brightness.light,
+        colorScheme: ColorScheme.fromSwatch(primarySwatch: Colors.amber).copyWith(secondary: Colors.amber, brightness: Brightness.light),
       ),
       darkTheme: ThemeData(
         brightness: Brightness.dark,
         floatingActionButtonTheme: const FloatingActionButtonThemeData(
           backgroundColor: Colors.amber,
         ),
-        colorScheme: ColorScheme.fromSwatch(primarySwatch: Colors.amber).copyWith(secondary: Colors.amber),
+        colorScheme: ColorScheme.fromSwatch(primarySwatch: Colors.amber).copyWith(secondary: Colors.amber, brightness: Brightness.dark),
       ),
+      debugShowCheckedModeBanner: false,
       home: const MyHomePage(title: 'Untis Free-Rooms'),
     );
   }
