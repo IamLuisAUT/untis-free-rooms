@@ -21,7 +21,15 @@ class MyApp extends StatelessWidget {
       title: 'Untis Free-Rooms',
       navigatorKey: navigatorKey,
       theme: ThemeData(
-        primarySwatch: Colors.amber,
+        colorScheme: ColorScheme.fromSwatch(primarySwatch: Colors.amber).copyWith(secondary: Colors.amber),
+        brightness: Brightness.light,
+      ),
+      darkTheme: ThemeData(
+        brightness: Brightness.dark,
+        floatingActionButtonTheme: const FloatingActionButtonThemeData(
+          backgroundColor: Colors.amber,
+        ),
+        colorScheme: ColorScheme.fromSwatch(primarySwatch: Colors.amber).copyWith(secondary: Colors.amber),
       ),
       home: const MyHomePage(title: 'Untis Free-Rooms'),
     );
