@@ -15,6 +15,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - run: echo "Done!"
       - uses: actions/checkout@v3
       - uses: actions/setup-java@v2
         with:
