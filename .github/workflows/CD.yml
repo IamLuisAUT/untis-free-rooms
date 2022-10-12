@@ -46,8 +46,7 @@ jobs:
         with:
           repo_token: "${{ secrets.GITHUB_TOKEN }}"
           prerelease: false
-          files:
-            LICENSE
+          files: |
             *.apk
       - uses: geekyeggo/delete-artifact@v1
         with:
