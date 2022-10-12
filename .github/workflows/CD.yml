@@ -31,6 +31,7 @@ jobs:
       - run: flutter build apk
       - uses: actions/upload-artifact@v2
         with:
+          name: app-release
           path: build/app/outputs/flutter-apk/app-release.apk
   release:
     needs: build
@@ -38,10 +39,16 @@ jobs:
     runs-on: ubuntu-latest
     
     steps:
+      - uses: actions/download-artifact@v3
+        with:
+          name: app-release
       - uses: "marvinpinto/action-automatic-releases@latest"
         with:
           repo_token: "${{ secrets.GITHUB_TOKEN }}"
           prerelease: false
           files:
-            LICENSE.txt
+            LICENSE
             *.apk
+      - uses: actions/delete-artifact@v1
+        with:
+          name: app-release
