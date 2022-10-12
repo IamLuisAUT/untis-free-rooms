@@ -49,6 +49,6 @@ jobs:
           files:
             LICENSE
             *.apk
-      - uses: actions/delete-artifact@v1
+      - uses: geekyeggo/delete-artifact@v1
         with:
           name: app-release
