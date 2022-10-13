@@ -3,10 +3,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'utils.dart';
 import 'webuntis.dart';
 
-const List<String> buildings = <String>['A', 'B', 'C', 'D'];
-const List<String> floors =  <String>['E', 'H', '1', '2', '3', '4', '5'];
-
-
 void main() {
   runApp(const MyApp());
 }
