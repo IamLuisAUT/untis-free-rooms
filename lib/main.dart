@@ -47,6 +47,7 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   bool preferencesInit = false;
+  bool useCurrentTime = true;
 
   String selectedBuilding = "";
 
@@ -84,7 +85,7 @@ class _MyHomePageState extends State<MyHomePage> {
       blockedRooms = "";
     });
     try {
-      List<dynamic> rooms = await getFreeRooms(untis, selectedBuilding, date);
+      List<dynamic> rooms = await getFreeRooms(untis, selectedBuilding, (useCurrentTime == true ? DateTime.now() : date));
       setState(() {
         freeRooms = rooms[0];
         blockedRooms = rooms[1];
@@ -93,7 +94,6 @@ class _MyHomePageState extends State<MyHomePage> {
     } on WebuntisException catch (e) {
       _showErrorDialog(context, e.code);
     }
-
   }
 
   void _saveLogin() async {
@@ -398,10 +398,11 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   Future<DateTime?> pickDateAndTime() async {
-        DateTime? date = await showDatePicker(context: context, initialDate: DateTime.now(), firstDate: schoolyearStart, lastDate: schoolyearEnd);
+    DateTime? date = await showDatePicker(context: context, initialDate: DateTime.now(), firstDate: schoolyearStart, lastDate: schoolyearEnd);
     if(date == null) return null;
     TimeOfDay? time = await showTimePicker(context: context, initialTime: TimeOfDay(hour: DateTime.now().hour, minute: DateTime.now().minute));
     if(time == null) return null;
+    useCurrentTime = false;
     return DateTime(date.year, date.month, date.day, time.hour, time.minute);
   }
 }
