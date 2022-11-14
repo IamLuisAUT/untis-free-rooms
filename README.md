@@ -12,7 +12,9 @@
 
   <p align="center">
     An app for listing all the free rooms in a school using the WebUntis API
-    <br />
+    <br/>
+    <span style="color: red; font-weight:bold; font-size: 15px">This app will no longer work by the end of June 2023</span>
+    <br/>
     <a href="https://github.com/IamLuisAUT/untis-free-rooms/releases">Download app</a>
     ·
     <a href="https://github.com/IamLuisAUT/untis-free-rooms/issues">Report Bug</a>
@@ -95,6 +97,6 @@ See the [open issues](https://github.com/IamLuisAUT/untis-free-rooms/issues) for
 <!-- LICENSE -->
 ## License
 
-Distributed under the **MIT License**. See `LICENSE.txt` for more information.
+Distributed under the **MIT License**. See `LICENSE` for more information.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
